@@ -3,15 +3,18 @@ import axios from "axios";
 
 function App() {
     const [customers, setCustomers] = useState([]);
+    const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
     useEffect(() => {
-        axios.get("http://52.221.25.139/customers")
+        
+        axios.get(`${API_URL}/customers`)
             .then(response => {
                 setCustomers(response.data);
             })
             .catch(error => {
                 console.error("Error fetching customers:", error);
             });
+
     }, []);
 
     return (

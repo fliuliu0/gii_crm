@@ -1,34 +1,15 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { Routes, Route } from "react-router-dom";
+import Login from "./pages/Login";
+import Dashboard from "./pages/Dashboard";
 
 function App() {
-    const [customers, setCustomers] = useState([]);
-    const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
-
-    useEffect(() => {
-        
-        axios.get(`${API_URL}/customers`)
-            .then(response => {
-                setCustomers(response.data);
-            })
-            .catch(error => {
-                console.error("Error fetching customers:", error);
-            });
-
-    }, []);
-
-    return (
-        <div>
-            <h1>CRM System</h1>
-            <ul>
-                {customers.map((customer) => (
-                    <li key={customer.id}>
-                        {customer.name} - {customer.email}
-                    </li>
-                ))}
-            </ul>
-        </div>
-    );
+  return (
+    <Routes>
+      <Route path="/" element={<Login />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/dashboard" element={<Dashboard />} />
+    </Routes>
+  );
 }
 
 export default App;

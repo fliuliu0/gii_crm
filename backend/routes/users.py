@@ -2,12 +2,39 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token
 from config import db
 from models import User
+from flasgger import swag_from
 
 users = Blueprint("users", __name__)
 
 # Get all users
 @users.route("/users", methods=["GET"])
+@swag_from({
+    "responses": {
+        200: {
+            "description": "Retrieve all users",
+            "examples": {
+                "application/json": [
+                    {
+                        "id": 1,
+                        "name": "Alice Johnson",
+                        "email": "alice@example.com",
+                        "role": "Admin"
+                    }
+                ]
+            }
+        }
+    }
+})
 def get_users():
+    """
+    Get All Users
+    ---
+    tags:
+      - Users
+    responses:
+      200:
+        description: List of all users
+    """
     user_list = User.query.all()
     result = [
         {"id": u.id, "name": u.name, "email": u.email, "role": u.role}
@@ -17,7 +44,66 @@ def get_users():
 
 # Add a new user
 @users.route("/users", methods=["POST"])
+@swag_from({
+    "requestBody": {
+        "required": True,
+        "content": {
+            "application/json": {
+                "example": {
+                    "name": "John Doe",
+                    "email": "john@example.com",
+                    "role": "Manager",
+                    "password": "securepassword"
+                }
+            }
+        }
+    },
+    "responses": {
+        201: {
+            "description": "User added successfully",
+            "examples": {
+                "application/json": {
+                    "message": "User added successfully!"
+                }
+            }
+        },
+        400: {
+            "description": "Email already exists",
+            "examples": {
+                "application/json": {
+                    "error": "Email already exists"
+                }
+            }
+        }
+    }
+})
 def add_user():
+    """
+    Add New User
+    ---
+    tags:
+      - Users
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              email:
+                type: string
+              role:
+                type: string
+              password:
+                type: string
+    responses:
+      201:
+        description: User created successfully
+      400:
+        description: Email already exists
+    """
     data = request.json
     if User.query.filter_by(email=data["email"]).first():
         return jsonify({"error": "Email already exists"}), 400
@@ -30,11 +116,65 @@ def add_user():
     new_user.set_password(data["password"])
     db.session.add(new_user)
     db.session.commit()
-    return jsonify({"message": "User added successfully!"})
+    return jsonify({"message": "User added successfully!"}), 201
 
 # Login user & return JWT token
 @users.route("/users/login", methods=["POST"])
+@swag_from({
+    "requestBody": {
+        "required": True,
+        "content": {
+            "application/json": {
+                "example": {
+                    "email": "john@example.com",
+                    "password": "securepassword"
+                }
+            }
+        }
+    },
+    "responses": {
+        200: {
+            "description": "Login successful",
+            "examples": {
+                "application/json": {
+                    "message": "Login successful",
+                    "token": "jwt_token_here"
+                }
+            }
+        },
+        401: {
+            "description": "Invalid credentials",
+            "examples": {
+                "application/json": {
+                    "error": "Invalid credentials"
+                }
+            }
+        }
+    }
+})
 def login():
+    """
+    User Login
+    ---
+    tags:
+      - Users
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+              password:
+                type: string
+    responses:
+      200:
+        description: Login successful, returns JWT token
+      401:
+        description: Invalid credentials
+    """
     data = request.json
     user = User.query.filter_by(email=data["email"]).first()
     if user and user.check_password(data["password"]):
@@ -45,7 +185,38 @@ def login():
 
 # Delete a user
 @users.route("/users/<int:id>", methods=["DELETE"])
+@swag_from({
+    "responses": {
+        200: {
+            "description": "User deleted successfully",
+            "examples": {
+                "application/json": {
+                    "message": "User deleted successfully!"
+                }
+            }
+        },
+        404: {
+            "description": "User not found",
+            "examples": {
+                "application/json": {
+                    "error": "User not found"
+                }
+            }
+        }
+    }
+})
 def delete_user(id):
+    """
+    Delete User
+    ---
+    tags:
+      - Users
+    responses:
+      200:
+        description: User deleted successfully
+      404:
+        description: User not found
+    """
     user = User.query.get(id)
     if not user:
         return jsonify({"error": "User not found"}), 404

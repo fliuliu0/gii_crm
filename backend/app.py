@@ -9,12 +9,31 @@ app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL
 app.config["SECRET_KEY"] = SECRET_KEY
 app.config["JWT_SECRET_KEY"] = SECRET_KEY  # Used for JWT Authentication
+app.config['JWT_ALGORITHM'] = 'HS256'
+app.config['JWT_DECODE_ALGORITHMS'] = ['HS256']
+app.config["JWT_VERIFY_SUB"] = False
+
+
+# Allow requests from frontend
+CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
+
+# ✅ Initialize JWT after setting config
+jwt = JWTManager(app)
 
 # Initialize Extensions
 db.init_app(app)
-CORS(app)
-jwt = JWTManager(app)
+
 swagger = Swagger(app)
+
+@app.before_request
+def handle_preflight():
+    if request.method == "OPTIONS":
+        response = jsonify({"message": "CORS preflight passed"})
+        response.headers.add("Access-Control-Allow-Origin", "http://localhost:3000")
+        response.headers.add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type, Authorization")
+        response.headers.add("Access-Control-Allow-Credentials", "true")
+        return response
 
 # AWS RDS MySQL Connection (using mysql-connector)
 def get_db_connection():
@@ -33,7 +52,12 @@ from routes.sales import sales
 from routes.customers import customers  
 from routes.users import users
 from routes.tasks import tasks
+from routes.funding import funding
+from routes.interactions import interactions
+from routes.update_logs import update_logs
+from routes.support_requests import support_requests
 
+# Register blueprints
 app.register_blueprint(users, url_prefix="/users")
 app.register_blueprint(tasks, url_prefix="/tasks")
 app.register_blueprint(communication, url_prefix="/communication")
@@ -41,6 +65,10 @@ app.register_blueprint(projects, url_prefix="/projects")
 app.register_blueprint(reports, url_prefix="/reports")
 app.register_blueprint(sales, url_prefix="/sales")
 app.register_blueprint(customers, url_prefix="/customers")  
+app.register_blueprint(funding, url_prefix="/funding")
+app.register_blueprint(interactions, url_prefix="/interactions")
+app.register_blueprint(update_logs, url_prefix="/update_logs")
+app.register_blueprint(support_requests, url_prefix="/support_requests")
 
 
 @app.route('/')

@@ -1,13 +1,14 @@
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from config import db
 from models import User
 from flasgger import swag_from
 
+
 users = Blueprint("users", __name__)
 
 # Get all users
-@users.route("/users", methods=["GET"])
+@users.route("/", methods=["GET"])
 @swag_from({
     "responses": {
         200: {
@@ -25,6 +26,7 @@ users = Blueprint("users", __name__)
         }
     }
 })
+
 def get_users():
     """
     Get All Users
@@ -43,7 +45,7 @@ def get_users():
     return jsonify(result)
 
 # Add a new user
-@users.route("/users", methods=["POST"])
+@users.route("/", methods=["POST"])
 @swag_from({
     "requestBody": {
         "required": True,
@@ -119,7 +121,7 @@ def add_user():
     return jsonify({"message": "User added successfully!"}), 201
 
 # Login user & return JWT token
-@users.route("/users/login", methods=["POST"])
+@users.route("/login", methods=["POST"])
 @swag_from({
     "requestBody": {
         "required": True,
@@ -178,13 +180,15 @@ def login():
     data = request.json
     user = User.query.filter_by(email=data["email"]).first()
     if user and user.check_password(data["password"]):
-        token = create_access_token(identity=user.id)
-        return jsonify({"message": "Login successful", "token": token})
+        token = create_access_token(identity=str(user.id))
+        return jsonify({"message": "Login successful", "token": token}), 200
 
     return jsonify({"error": "Invalid credentials"}), 401
 
+
+
 # Delete a user
-@users.route("/users/<int:id>", methods=["DELETE"])
+@users.route("/<int:id>", methods=["DELETE"])
 @swag_from({
     "responses": {
         200: {
@@ -224,3 +228,19 @@ def delete_user(id):
     db.session.delete(user)
     db.session.commit()
     return jsonify({"message": "User deleted successfully!"})
+
+@users.route("/profile", methods=["GET"])
+@jwt_required()
+def profile():
+    current_user_id = get_jwt_identity()
+    user = User.query.get(current_user_id)
+    if user:
+        user_data = {
+            "id": user.id,
+            "name": user.name,
+            "email": user.email,
+            "role": user.role
+        }
+        return jsonify(user_data), 200
+    else:
+        return jsonify({"error": "User not found"}), 404

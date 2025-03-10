@@ -15,7 +15,7 @@
 
 - **前端**：React.js、React Bootstrap、Axios
 - **后端**：Flask、Flask-JWT-Extended、SQLAlchemy
-- **数据库**：MySQL
+- **数据库**：MySQL (Amazon RDS)
 
 ---
 

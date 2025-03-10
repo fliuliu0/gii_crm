@@ -40,7 +40,6 @@ function CustomerProfile() {
         }
     }, [id]);
 
-    // ✅ Open Edit Customer Modal & Load Current Data
     const openEditCustomerModal = () => {
         setUpdatedCustomer({
             name: customer?.name,
@@ -53,7 +52,6 @@ function CustomerProfile() {
         setShowEditCustomerModal(true);
     };
     
-    // ✅ Handle Customer Update
     const handleCustomerUpdate = async () => {
         try {
             await axios.put(`http://127.0.0.1:5000/customers/${id}`, updatedCustomer, {
@@ -66,8 +64,6 @@ function CustomerProfile() {
         }
     };
     
-
-    // ✅ Update customer tag via API
     const handleTagChange = (e) => {
         const newTag = e.target.value;
         axios.put(`http://127.0.0.1:5000/customers/${id}`, { tags: newTag }, {

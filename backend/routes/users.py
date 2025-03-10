@@ -1,8 +1,13 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-from config import db
 from models import User
 from flasgger import swag_from
+import datetime
+import jwt
+from config import db, SECRET_KEY
+from flask_bcrypt import Bcrypt
+
+bcrypt = Bcrypt()
 
 
 users = Blueprint("users", __name__)
@@ -188,68 +193,79 @@ def add_user():
 
 # Login user & return JWT token
 @users.route("/login", methods=["POST"])
-@swag_from({
-    "requestBody": {
-        "required": True,
-        "content": {
-            "application/json": {
-                "example": {
-                    "email": "john@example.com",
-                    "password": "securepassword"
-                }
-            }
-        }
-    },
-    "responses": {
-        200: {
-            "description": "Login successful",
-            "examples": {
-                "application/json": {
-                    "message": "Login successful",
-                    "token": "jwt_token_here"
-                }
-            }
-        },
-        401: {
-            "description": "Invalid credentials",
-            "examples": {
-                "application/json": {
-                    "error": "Invalid credentials"
-                }
-            }
-        }
-    }
-})
+# @swag_from({
+#     "requestBody": {
+#         "required": True,
+#         "content": {
+#             "application/json": {
+#                 "example": {
+#                     "email": "john@example.com",
+#                     "password": "securepassword"
+#                 }
+#             }
+#         }
+#     },
+#     "responses": {
+#         200: {
+#             "description": "Login successful",
+#             "examples": {
+#                 "application/json": {
+#                     "message": "Login successful",
+#                     "token": "jwt_token_here"
+#                 }
+#             }
+#         },
+#         401: {
+#             "description": "Invalid credentials",
+#             "examples": {
+#                 "application/json": {
+#                     "error": "Invalid credentials"
+#                 }
+#             }
+#         }
+#     }
+# })
+# def login():
+#     """
+#     User Login
+#     ---
+#     tags:
+#       - Users
+#     requestBody:
+#       required: true
+#       content:
+#         application/json:
+#           schema:
+#             type: object
+#             properties:
+#               email:
+#                 type: string
+#               password:
+#                 type: string
+#     responses:
+#       200:
+#         description: Login successful, returns JWT token
+#       401:
+#         description: Invalid credentials
+#     """
+#     data = request.json
+#     user = User.query.filter_by(email=data["email"]).first()
+#     if user and user.check_password(data["password"]):
+#         token = create_access_token(identity=user.id)
+#         return jsonify({"message": "Login successful", "token": token}), 200
+
+#     return jsonify({"error": "Invalid credentials"}), 401
 def login():
-    """
-    User Login
-    ---
-    tags:
-      - Users
-    requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              email:
-                type: string
-              password:
-                type: string
-    responses:
-      200:
-        description: Login successful, returns JWT token
-      401:
-        description: Invalid credentials
-    """
     data = request.json
     user = User.query.filter_by(email=data["email"]).first()
-    if user and user.check_password(data["password"]):
-        token = create_access_token(identity=user.id)
-        return jsonify({"message": "Login successful", "token": token}), 200
 
-    return jsonify({"error": "Invalid credentials"}), 401
+    # ✅ Use Flask-Bcrypt for password verification
+    if not user or not bcrypt.check_password_hash(user.password, data["password"]):
+        return jsonify({"error": "Invalid email or password"}), 401
+
+    token = create_access_token(identity=user.id, additional_claims={"role": user.role})
+
+    return jsonify({"token": token, "role": user.role}), 200
 
 
 # Delete a user
@@ -296,16 +312,34 @@ def delete_user(id):
 
 @users.route("/profile", methods=["GET"])
 @jwt_required()
+# def profile():
+#     current_user_id = get_jwt_identity()
+#     user = User.query.get(current_user_id)
+#     if user:
+#         user_data = {
+#             "id": user.id,
+#             "name": user.name,
+#             "email": user.email,
+#             "role": user.role
+#         }
+#         return jsonify(user_data), 200
+#     else:
+#         return jsonify({"error": "User not found"}), 404
 def profile():
-    current_user_id = get_jwt_identity()
-    user = User.query.get(current_user_id)
-    if user:
-        user_data = {
+    try:
+        current_user_id = get_jwt_identity()  # ✅ Correct way to get user_id
+        print("Decoded User ID:", current_user_id)  # 🔍 Debugging log
+
+        user = User.query.get(current_user_id)
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+
+        return jsonify({
             "id": user.id,
             "name": user.name,
             "email": user.email,
             "role": user.role
-        }
-        return jsonify(user_data), 200
-    else:
-        return jsonify({"error": "User not found"}), 404
+        }), 200
+    except Exception as e:
+        print("JWT Error:", str(e))  # 🔍 Log JWT error
+        return jsonify({"error": "Invalid token"}), 401

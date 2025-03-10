@@ -3,6 +3,9 @@ import NavigationBar from "./components/NavigationBar";
 
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
+import SalesDashboard from "./pages/SalesDashboard";
+import ProjectManagerDashboard from "./pages/ProjectManagerDashboard";
+import AdminDashboard from "./pages/AdminDashboard";
 import Customers from "./pages/Customers";
 import Projects from "./pages/Projects";
 import ProjectForm from "./pages/ProjectForm";
@@ -29,6 +32,9 @@ function App() {
           <Route path="/" element={<Login />} />
           <Route path="/login" element={<Login />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/admindashboard" element={<AdminDashboard />} />
+          <Route path="/salesdashboard" element={<SalesDashboard />} />
+          <Route path="/projectmanagerdashboard" element={<ProjectManagerDashboard />} />
           <Route path="/customers" element={<Customers />} />
           <Route path="/projects" element={<Projects />} />
           <Route path="/projectform" element={<ProjectForm />} />

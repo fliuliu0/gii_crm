@@ -1,6 +1,7 @@
 from datetime import datetime, timezone
 from flask_bcrypt import Bcrypt
 from config import db
+from werkzeug.security import generate_password_hash, check_password_hash
 
 bcrypt = Bcrypt()
 

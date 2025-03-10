@@ -175,43 +175,45 @@ function Sales() {
                 Add Opportunity
             </Button>
 
-            <Table striped bordered hover className="mt-3">
-                <thead>
-                    <tr>
-                        <th>Customer</th>
-                        <th>Opportunity</th>
-                        <th>Sales Stage</th>
-                        <th>Revenue</th>
-                        <th>Sales Representative</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {filteredOpportunities.map((op) => (
-                        <tr key={op.id}>
-                            <td>{customers[op.customer_id] || "Loading..."} (ID: {op.customer_id})</td>
-                            <td>{op.opportunity}</td>
-                            <td>
-                                <Form.Select
-                                    value={op.sales_stage}
-                                    onChange={(e) => handleStageChange(op.id, e.target.value)}
-                                >
-                                    <option value="Proposal Sent">Proposal Sent</option>
-                                    <option value="Negotiation">Negotiation</option>
-                                    <option value="Qualified">Qualified</option>
-                                </Form.Select>
-                            </td>
-                            <td>{op.revenue}</td>
-                            <td>{users[op.owner] || "Loading..."} (ID: {op.owner})</td>
-                            <td>
-                                <Button variant="danger" onClick={() => handleDelete(op.id)}>
-                                    Delete
-                                </Button>
-                            </td>
+            <div className="table-responsive">
+                <Table striped bordered hover className="mt-3">
+                    <thead>
+                        <tr>
+                            <th>Customer</th>
+                            <th>Opportunity</th>
+                            <th>Sales Stage</th>
+                            <th>Revenue</th>
+                            <th>Sales Representative</th>
+                            <th>Actions</th>
                         </tr>
-                    ))}
-                </tbody>
-            </Table>
+                    </thead>
+                    <tbody>
+                        {filteredOpportunities.map((op) => (
+                            <tr key={op.id}>
+                                <td>{customers[op.customer_id] || "Loading..."} (ID: {op.customer_id})</td>
+                                <td>{op.opportunity}</td>
+                                <td>
+                                    <Form.Select
+                                        value={op.sales_stage}
+                                        onChange={(e) => handleStageChange(op.id, e.target.value)}
+                                    >
+                                        <option value="Proposal Sent">Proposal Sent</option>
+                                        <option value="Negotiation">Negotiation</option>
+                                        <option value="Qualified">Qualified</option>
+                                    </Form.Select>
+                                </td>
+                                <td>{op.revenue}</td>
+                                <td>{users[op.owner] || "Loading..."} (ID: {op.owner})</td>
+                                <td>
+                                    <Button variant="danger" onClick={() => handleDelete(op.id)}>
+                                        Delete
+                                    </Button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </Table>
+            </div>
     
             {/* Add Opportunity Modal */}
             <Modal show={showModal} onHide={() => setShowModal(false)}>

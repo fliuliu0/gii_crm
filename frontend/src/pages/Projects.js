@@ -48,37 +48,39 @@ function Projects() {
                 </Form.Group>
                 
                 {/* Projects Table */}
-                <Table striped bordered hover>
-                    <thead>
-                        <tr>
-                            <th>Project Name</th>
-                            <th>Customer</th>
-                            <th>Budget</th>
-                            <th>Phase</th>
-                            <th>Manager</th>
-                            <th>Details</th> {/* New column for details link */}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {filteredProjects.map(project => (
-                            <tr key={project.id}>
-                                <td>{project.project_name}</td>
-                                <td>{customers[project.customer_id]}</td>
-                                <td>${project.budget}</td>
-                                <td>{project.phase}</td>
-                                <td>{project.manager}</td>
-                                <td>
-                                    <Button
-                                        variant="primary"
-                                        onClick={() => navigate(`/projects/${project.id}`)}
-                                    >
-                                        View Details
-                                    </Button>
-                                </td>
+                <div className="table-responsive">
+                    <Table striped bordered hover>
+                        <thead>
+                            <tr>
+                                <th>Project Name</th>
+                                <th>Customer</th>
+                                <th>Budget</th>
+                                <th>Phase</th>
+                                <th>Manager</th>
+                                <th>Details</th> {/* New column for details link */}
                             </tr>
-                        ))}
-                    </tbody>
-                </Table>
+                        </thead>
+                        <tbody>
+                            {filteredProjects.map(project => (
+                                <tr key={project.id}>
+                                    <td>{project.project_name}</td>
+                                    <td>{customers[project.customer_id]}</td>
+                                    <td>${project.budget}</td>
+                                    <td>{project.phase}</td>
+                                    <td>{project.manager}</td>
+                                    <td>
+                                        <Button
+                                            variant="primary"
+                                            onClick={() => navigate(`/projects/${project.id}`)}
+                                        >
+                                            View Details
+                                        </Button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </Table>
+                </div>
             </Container>
         </>
     );

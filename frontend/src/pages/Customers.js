@@ -86,38 +86,40 @@ function Customers() {
                 </Form>
 
                 {/* ✅ Table with Tag Column */}
-                <Table striped bordered hover>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Company</th>
-                            <th>Industry</th>
-                            <th>Location</th>
-                            <th>Tags</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {filteredCustomers.map((customer) => (
-                            <tr key={customer.id}>
-                                <td>{customer.id}</td>
-                                <td>{customer.name}</td>
-                                <td>{customer.email}</td>
-                                <td>{customer.company}</td>
-                                <td>{customer.industry}</td>
-                                <td>{customer.location}</td>
-                                <td>{customer.tags}</td>
-                                <td>
-                                    <Button variant="info" size="sm" onClick={() => navigate(`/customers/${customer.id}`)}>
-                                        View Profile
-                                    </Button>
-                                </td>
+                <div className="table-responsive">
+                    <Table striped bordered hover>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Company</th>
+                                <th>Industry</th>
+                                <th>Location</th>
+                                <th>Tags</th>
+                                <th>Actions</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </Table>
+                        </thead>
+                        <tbody>
+                            {filteredCustomers.map((customer) => (
+                                <tr key={customer.id}>
+                                    <td>{customer.id}</td>
+                                    <td>{customer.name}</td>
+                                    <td>{customer.email}</td>
+                                    <td>{customer.company}</td>
+                                    <td>{customer.industry}</td>
+                                    <td>{customer.location}</td>
+                                    <td>{customer.tags}</td>
+                                    <td>
+                                        <Button variant="info" size="sm" onClick={() => navigate(`/customers/${customer.id}`)}>
+                                            View Profile
+                                        </Button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </Table>
+                </div>
             </Container>
         </>
     );

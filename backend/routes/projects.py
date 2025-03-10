@@ -155,3 +155,52 @@ def delete_project(project_id):
     db.session.delete(project)
     db.session.commit()
     return jsonify({"message": "Project deleted successfully!"}), 200
+
+# ✅ Get funding info for a project
+@projects.route("/<int:project_id>/funding", methods=["GET"])
+def get_project_funding(project_id):
+    """
+    Get funding info for a specific project.
+    """
+    project = Project.query.get(project_id)
+    if not project:
+        return jsonify({"error": "Project not found"}), 404
+
+    return jsonify({
+        "id": project.id,
+        "budget": project.budget,
+        "funding_status": project.funding_status,
+        "approval_date": project.approval_date,
+        "decision_maker": project.manager  # ✅ Manager is now the decision maker
+    }), 200
+
+@projects.route("/<int:project_id>/funding", methods=["PUT"])
+def update_project_funding(project_id):
+    """
+    Update funding details for a project.
+    """
+    project = Project.query.get(project_id)
+    if not project:
+        return jsonify({"error": "Project not found"}), 404
+
+    data = request.json
+
+    print("Received request payload:", data)  # ✅ DEBUG PRINT
+
+    new_status = data.get("funding_status", project.funding_status)
+
+    # ✅ Check if new_status is valid
+    valid_statuses = ["Funded", "Approved", "Pending", "Rejected"]
+    if new_status not in valid_statuses:
+        return jsonify({"error": f"Invalid funding status. Must be one of {valid_statuses}"}), 400
+
+    # ✅ If status changes to "Approved" or "Funded", set approval_date
+    if new_status in ["Approved", "Funded"] and project.funding_status not in ["Approved", "Funded"]:
+        project.approval_date = db.func.current_timestamp()
+    elif new_status not in ["Approved", "Funded"]:
+        project.approval_date = None  # ✅ Remove approval date
+
+    project.funding_status = new_status  # ✅ Ensure it's a string
+
+    db.session.commit()
+    return jsonify({"message": "Funding information updated successfully!", "funding_status": new_status}), 200

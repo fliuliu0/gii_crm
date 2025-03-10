@@ -5,17 +5,16 @@ import { Container, Card, Table, Button, Form, Modal, Alert } from "react-bootst
 
 function CustomerProfile() {
     const { id } = useParams();
+    const [opportunities, setOpportunities] = useState([]);
+
     const navigate = useNavigate();
     const [customer, setCustomer] = useState(null);
-    const [funding, setFunding] = useState([]);
     const [interactions, setInteractions] = useState([]);
     
     const [showInteractionModal, setShowInteractionModal] = useState(false);
-    const [showFundingModal, setShowFundingModal] = useState(false);
     const [showEditCustomerModal, setShowEditCustomerModal] = useState(false);
 
     const [newInteraction, setNewInteraction] = useState({ interaction_type: "Email", details: "" });
-    const [updatedFunding, setUpdatedFunding] = useState({});
     const [updatedCustomer, setUpdatedCustomer] = useState({});
 
     const [file, setFile] = useState(null);
@@ -26,16 +25,19 @@ function CustomerProfile() {
             .then(res => setCustomer(res.data))
             .catch(() => setError("Failed to load customer details"));
 
-        axios.get(`http://127.0.0.1:5000/funding/customers/${id}`)
-            .then(res => setFunding(Array.isArray(res.data) ? res.data : [res.data])) // Wrap in array if needed
-            .catch(() => {
-                setError("Failed to load funding information");
-                setFunding([]);
-            });
-
         axios.get(`http://127.0.0.1:5000/interactions/${id}`)
             .then(res => setInteractions(res.data))
             .catch(() => setError("Failed to load interactions"));
+
+        if (id) {
+            axios.get(`http://127.0.0.1:5000/sales_opportunity/customer/${id}`)
+                .then((res) => setOpportunities(res.data))
+                .catch(() => setError("Failed to fetch sales opportunities."));
+        } else {
+            axios.get("http://127.0.0.1:5000/sales_opportunity")
+                .then((res) => setOpportunities(res.data))
+                .catch(() => setError("Failed to fetch sales opportunities."));
+        }
     }, [id]);
 
     // ✅ Open Edit Customer Modal & Load Current Data
@@ -46,7 +48,6 @@ function CustomerProfile() {
             phone: customer?.phone,
             industry: customer?.industry,
             location: customer?.location,
-            sales_stage: customer?.sales_stage,
             technical_evaluator: customer?.technical_evaluator,
         });
         setShowEditCustomerModal(true);
@@ -78,23 +79,6 @@ function CustomerProfile() {
         .catch(() => alert("Failed to update tag"));
     };
 
-    const handleFundingUpdate = async () => {
-        console.log("Submitting funding update:", updatedFunding);
-    
-        try {
-            const response = await axios.put(`http://127.0.0.1:5000/funding/customers/${id}`, updatedFunding, {
-                headers: { "Content-Type": "application/json" },
-            });
-    
-            console.log("Funding update successful:", response.data);
-            setShowFundingModal(false);
-            window.location.reload();
-        } catch (error) {
-            console.error("Funding update failed:", error.response ? error.response.data : error.message);
-            setError("Failed to update funding information");
-        }
-    };
-    
 
     const handleFileUpload = (event) => {
         setFile(event.target.files[0]);
@@ -122,59 +106,44 @@ function CustomerProfile() {
             {error && <Alert variant="danger">{error}</Alert>}
             <Button variant="secondary" onClick={() => navigate(-1)}>Back to Customers</Button>
             {customer && (
-                <Card className="mb-4">
-                    <Card.Body>
-                        <Card.Title>{customer.name} ({customer.company})</Card.Title>
-                        <Card.Text>
-                            <strong>Email:</strong> {customer.email} <br />
-                            <strong>Phone:</strong> {customer.phone} <br />
-                            <strong>Industry:</strong> {customer.industry} <br />
-                            <strong>Location:</strong> {customer.location} <br />
-                            <strong>Sales Stage:</strong> {customer.sales_stage} <br />
-                            <strong>Technical Evaluator:</strong> {customer.technical_evaluator} <br />
-                            <strong>Tag:</strong>
-                            <Form.Select value={customer.tags} onChange={handleTagChange} className="mt-2">
-                                <option value="VIP">VIP</option>
-                                <option value="Potential">Potential</option>
-                                <option value="Archived">Archived</option>
-                            </Form.Select>
+            <Card className="mb-4">
+                <Card.Body>
+                <Card.Title>{customer.name} ({customer.company})</Card.Title>
+                <Card.Text>
+                    <strong>Email:</strong> {customer.email} <br />
+                    <strong>Phone:</strong> {customer.phone} <br />
+                    <strong>Industry:</strong> {customer.industry} <br />
+                    <strong>Location:</strong> {customer.location} <br />
+                    <strong>Technical Evaluator:</strong> {customer.technical_evaluator} <br />
+                    <strong>Tag:</strong>
+                    <Form.Select value={customer.tags} onChange={handleTagChange} className="mt-2">
+                        <option value="VIP">VIP</option>
+                        <option value="Potential">Potential</option>
+                        <option value="Archived">Archived</option>
+                    </Form.Select>
+                </Card.Text>
 
-                        </Card.Text>
-                        <Button variant="info" onClick={openEditCustomerModal}>Edit Customer Profile</Button>
-                        <Button 
-                            variant="info" 
-                            className="mt-2"
-                            onClick={() => navigate(`/projects/customers/${customer.id}`)}
-                        >
-                            View Projects
-                        </Button>
-                    </Card.Body>
-                </Card>
-            )}
-
-            <h3>Funding Information</h3>
-            <Button variant="warning" onClick={() => setShowFundingModal(true)}>Edit Funding Information</Button>
-            <Table striped bordered hover className="mt-3">
-                <thead>
-                    <tr>
-                        <th>Status</th>
-                        <th>Budget</th>
-                        <th>Approval Date</th>
-                        <th>Decision Maker</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {funding.map((fund) => (
-                        <tr key={fund.id}>
-                            <td>{fund.funding_status}</td>
-                            <td>${fund.project_budget}</td>
-                            <td>{fund.approval_date}</td>
-                            <td>{fund.decision_maker}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </Table>
-            
+                {/* ✅ Buttons spaced out */}
+                <div className="d-flex justify-content-between mt-3">
+                    <Button variant="info" onClick={openEditCustomerModal}>
+                        Edit Customer Profile
+                    </Button>
+                    <Button 
+                        variant="info"
+                        onClick={() => navigate(`/projects/customers/${customer.id}`)}
+                    >
+                        View Projects
+                    </Button>
+                    <Button 
+                        variant="info"
+                        onClick={() => navigate(`/sales/customer/${customer.id}`)}
+                    >
+                        View Sales Opportunity
+                    </Button>
+                </div>
+            </Card.Body>
+            </Card>
+        )}
 
             <h3>Interaction History</h3>
             <Button variant="primary" onClick={() => setShowInteractionModal(true)}>Add Interaction</Button>
@@ -252,15 +221,6 @@ function CustomerProfile() {
                         </Form.Group>
 
                         <Form.Group className="mb-3">
-                            <Form.Label>Sales Stage</Form.Label>
-                            <Form.Control 
-                                type="text" 
-                                value={updatedCustomer.sales_stage || ""}
-                                onChange={(e) => setUpdatedCustomer({ ...updatedCustomer, sales_stage: e.target.value })}
-                            />
-                        </Form.Group>
-
-                        <Form.Group className="mb-3">
                             <Form.Label>Technical Evaluator</Form.Label>
                             <Form.Control 
                                 type="text" 
@@ -275,53 +235,6 @@ function CustomerProfile() {
                     <Button variant="success" onClick={handleCustomerUpdate}>Save Changes</Button>
                 </Modal.Footer>
             </Modal>
-
-            {/* ✅ Funding Edit Modal */}
-            <Modal show={showFundingModal} onHide={() => setShowFundingModal(false)}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Edit Funding Information</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form>
-                        <Form.Group className="mb-3">
-                            <Form.Label>Funding Status</Form.Label>
-                            <Form.Select 
-                                value={updatedFunding.funding_status || ""}
-                                onChange={(e) => setUpdatedFunding({ ...updatedFunding, funding_status: e.target.value })}
-                            >
-                                <option value="" disabled>Select status</option>
-                                <option value="Funded">Funded</option>
-                                <option value="Approved">Approved</option>
-                                <option value="Pending">Pending</option>
-                                <option value="Rejected">Rejected</option>
-                            </Form.Select>
-                        </Form.Group>
-
-                        <Form.Group className="mb-3">
-                            <Form.Label>Project Budget</Form.Label>
-                            <Form.Control 
-                                type="number" 
-                                value={updatedFunding.project_budget || ""}
-                                onChange={(e) => setUpdatedFunding({ ...updatedFunding, project_budget: e.target.value })} 
-                            />
-                        </Form.Group>
-
-                        <Form.Group className="mb-3">
-                            <Form.Label>Decision Maker</Form.Label>
-                            <Form.Control 
-                                type="text" 
-                                value={updatedFunding.decision_maker || ""}
-                                onChange={(e) => setUpdatedFunding({ ...updatedFunding, decision_maker: e.target.value })} 
-                            />
-                        </Form.Group>
-                    </Form>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={() => setShowFundingModal(false)}>Close</Button>
-                    <Button variant="success" onClick={handleFundingUpdate}>Save Changes</Button>
-                </Modal.Footer>
-            </Modal>
-
 
             <Modal show={showInteractionModal} onHide={() => setShowInteractionModal(false)}>
                 <Modal.Header closeButton>

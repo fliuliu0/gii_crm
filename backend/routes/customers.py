@@ -20,12 +20,8 @@ customers = Blueprint("customers", __name__)
                         "phone": "123456789",
                         "company": "ABC Corp",
                         "industry": "Technology",
-                        "sales_stage": "Negotiation",
                         "location": "Shanghai, China",
                         "tags": "VIP",
-                        "funding_status": "Approved",
-                        "project_budget": 50000,
-                        "decision_maker": "Alice Johnson",
                         "technical_evaluator": "Mike Lee",
                         "created_at": "2025-03-02T12:00:00",
                         "address": "123 Main St, City, Country"
@@ -54,12 +50,8 @@ def get_customers():
             "phone": c.phone,
             "company": c.company,
             "industry": c.industry,
-            "sales_stage": c.sales_stage,
             "location": c.location,
             "tags": c.tags,
-            "funding_status": c.funding_status,
-            "project_budget": float(c.project_budget) if c.project_budget else None,
-            "decision_maker": c.decision_maker,
             "technical_evaluator": c.technical_evaluator,
             "created_at": c.created_at,
             "address": c.address
@@ -82,12 +74,8 @@ def get_customers():
                     "phone": "987654321",
                     "company": "XYZ Ltd",
                     "industry": "Finance",
-                    "sales_stage": "New Lead",
                     "location": "Beijing, China",
                     "tags": "Potential",
-                    "funding_status": "Pending",
-                    "project_budget": 80000,
-                    "decision_maker": "Tom Smith",
                     "technical_evaluator": "Sarah Kim",
                     "address": "456 Another St, City, Country"
                 }
@@ -118,12 +106,8 @@ def add_customer():
         phone=data.get("phone"),
         company=data.get("company"),
         industry=data.get("industry"),
-        sales_stage=data.get("sales_stage"),
         location=data.get("location"),
         tags=data.get("tags"),
-        funding_status=data.get("funding_status"),
-        project_budget=data.get("project_budget"),
-        decision_maker=data.get("decision_maker"),
         technical_evaluator=data.get("technical_evaluator"),
         address=data.get("address")
     )
@@ -155,12 +139,8 @@ def add_customer():
                     "phone": "123456789",
                     "company": "ABC Corp",
                     "industry": "Technology",
-                    "sales_stage": "Negotiation",
                     "location": "Shanghai, China",
                     "tags": "VIP",
-                    "funding_status": "Approved",
-                    "project_budget": 50000,
-                    "decision_maker": "Alice Johnson",
                     "technical_evaluator": "Mike Lee",
                     "created_at": "2025-03-02T12:00:00",
                     "address": "123 Main St, City, Country"
@@ -190,12 +170,8 @@ def get_customer(id):
         "phone": customer.phone,
         "company": customer.company,
         "industry": customer.industry,
-        "sales_stage": customer.sales_stage,
         "location": customer.location,
         "tags": customer.tags,
-        "funding_status": customer.funding_status,
-        "project_budget": float(customer.project_budget) if customer.project_budget else None,
-        "decision_maker": customer.decision_maker,
         "technical_evaluator": customer.technical_evaluator,
         "created_at": customer.created_at,
         "address": customer.address
@@ -235,12 +211,8 @@ def update_customer(id):
     customer.phone = data.get("phone", customer.phone)
     customer.company = data.get("company", customer.company)
     customer.industry = data.get("industry", customer.industry)
-    customer.sales_stage = data.get("sales_stage", customer.sales_stage)
     customer.location = data.get("location", customer.location)
     customer.tags = data.get("tags", customer.tags)
-    customer.funding_status = data.get("funding_status", customer.funding_status)
-    customer.project_budget = data.get("project_budget", customer.project_budget)
-    customer.decision_maker = data.get("decision_maker", customer.decision_maker)
     customer.technical_evaluator = data.get("technical_evaluator", customer.technical_evaluator)
     customer.address = data.get("address", customer.address)
 

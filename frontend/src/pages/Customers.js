@@ -48,18 +48,6 @@ function Customers() {
 
     return (
         <>
-            <Navbar bg="dark" variant="dark">
-                <Container>
-                    <Navbar.Brand>CRM Customers</Navbar.Brand>
-                    <Nav className="ms-auto">
-                        <Button variant="outline-light" onClick={() => {
-                            localStorage.removeItem("token");
-                            navigate("/login");
-                        }}>Logout</Button>
-                    </Nav>
-                </Container>
-            </Navbar>
-
             <Container className="mt-4">
                 <h2>Customer List</h2>
                 {error && <Alert variant="danger">{error}</Alert>}
@@ -72,16 +60,6 @@ function Customers() {
                             <option value="">All</option>
                             {getUniqueValues("industry").map((ind) => (
                                 <option key={ind} value={ind}>{ind}</option>
-                            ))}
-                        </Form.Select>
-                    </Form.Group>
-
-                    <Form.Group>
-                        <Form.Label>Sales Stage</Form.Label>
-                        <Form.Select onChange={(e) => setSalesStageFilter(e.target.value)}>
-                            <option value="">All</option>
-                            {getUniqueValues("sales_stage").map((stage) => (
-                                <option key={stage} value={stage}>{stage}</option>
                             ))}
                         </Form.Select>
                     </Form.Group>
@@ -116,7 +94,6 @@ function Customers() {
                             <th>Email</th>
                             <th>Company</th>
                             <th>Industry</th>
-                            <th>Sales Stage</th>
                             <th>Location</th>
                             <th>Tags</th>
                             <th>Actions</th>
@@ -130,7 +107,6 @@ function Customers() {
                                 <td>{customer.email}</td>
                                 <td>{customer.company}</td>
                                 <td>{customer.industry}</td>
-                                <td>{customer.sales_stage}</td>
                                 <td>{customer.location}</td>
                                 <td>{customer.tags}</td>
                                 <td>

@@ -44,6 +44,72 @@ def get_users():
     ]
     return jsonify(result)
 
+#GET a specific user
+@users.route("/<int:user_id>", methods=["GET"])
+@swag_from({
+    "parameters": [
+        {
+            "name": "user_id",
+            "in": "path",
+            "required": True,
+            "schema": {
+                "type": "integer"
+            }
+        }
+    ],
+    "responses": {
+        200: {
+            "description": "Retrieve user by ID",
+            "examples": {
+                "application/json": {
+                    "id": 1,
+                    "name": "Alice Johnson",
+                    "email": "alice@example.com",
+                    "role": "Admin"
+                }
+            }
+        },
+        404: {
+            "description": "User not found",
+            "examples": {
+                "application/json": {
+                    "error": "User not found"
+                }
+            }
+        }
+    }
+})
+def get_user(user_id):
+    """
+    Get Specific User by ID
+    ---
+    tags:
+      - Users
+    parameters:
+      - name: user_id
+        in: path
+        required: True
+        schema:
+          type: integer
+    responses:
+      200:
+        description: User found
+      404:
+        description: User not found
+    """
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    user_data = {
+        "id": user.id,
+        "name": user.name,
+        "email": user.email,
+        "role": user.role
+    }
+    return jsonify(user_data), 200
+
+
 # Add a new user
 @users.route("/", methods=["POST"])
 @swag_from({
@@ -180,11 +246,10 @@ def login():
     data = request.json
     user = User.query.filter_by(email=data["email"]).first()
     if user and user.check_password(data["password"]):
-        token = create_access_token(identity=str(user.id))
+        token = create_access_token(identity=user.id)
         return jsonify({"message": "Login successful", "token": token}), 200
 
     return jsonify({"error": "Invalid credentials"}), 401
-
 
 
 # Delete a user

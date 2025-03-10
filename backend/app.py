@@ -48,14 +48,14 @@ def get_db_connection():
 from routes.communication import communication
 from routes.projects import projects
 from routes.reports import reports
-from routes.sales import sales
 from routes.customers import customers  
 from routes.users import users
 from routes.tasks import tasks
-from routes.funding import funding
+# from routes.funding import funding
 from routes.interactions import interactions
 from routes.update_logs import update_logs
 from routes.support_requests import support_requests
+from routes.sales_opportunity import sales_opportunity
 
 # Register blueprints
 app.register_blueprint(users, url_prefix="/users")
@@ -63,9 +63,9 @@ app.register_blueprint(tasks, url_prefix="/tasks")
 app.register_blueprint(communication, url_prefix="/communication")
 app.register_blueprint(projects, url_prefix="/projects")
 app.register_blueprint(reports, url_prefix="/reports")
-app.register_blueprint(sales, url_prefix="/sales")
+app.register_blueprint(sales_opportunity, url_prefix="/sales_opportunity")
 app.register_blueprint(customers, url_prefix="/customers")  
-app.register_blueprint(funding, url_prefix="/funding")
+# app.register_blueprint(funding, url_prefix="/funding")
 app.register_blueprint(interactions, url_prefix="/interactions")
 app.register_blueprint(update_logs, url_prefix="/update_logs")
 app.register_blueprint(support_requests, url_prefix="/support_requests")

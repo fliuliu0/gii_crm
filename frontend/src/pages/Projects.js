@@ -6,7 +6,7 @@ import { Container, Table, Button, Navbar, Nav, Alert, Form } from "react-bootst
 function Projects() {
     const navigate = useNavigate();
     const [projects, setProjects] = useState([]);
-    const [customers, setCustomers] = useState({}); // Store customer names
+    const [customers, setCustomers] = useState({});
     const [error, setError] = useState(null);
     const [customerFilter, setCustomerFilter] = useState("");
 
@@ -32,18 +32,6 @@ function Projects() {
 
     return (
         <>
-            <Navbar bg="dark" variant="dark">
-                <Container>
-                    <Navbar.Brand>Projects Overview</Navbar.Brand>
-                    <Nav className="ms-auto">
-                        <Button variant="outline-light" onClick={() => {
-                            localStorage.removeItem("token");
-                            navigate("/login");
-                        }}>Logout</Button>
-                    </Nav>
-                </Container>
-            </Navbar>
-
             <Container className="mt-4">
                 <h2>All Projects</h2>
                 {error && <Alert variant="danger">{error}</Alert>}
@@ -68,6 +56,7 @@ function Projects() {
                             <th>Budget</th>
                             <th>Phase</th>
                             <th>Manager</th>
+                            <th>Details</th> {/* New column for details link */}
                         </tr>
                     </thead>
                     <tbody>
@@ -78,6 +67,14 @@ function Projects() {
                                 <td>${project.budget}</td>
                                 <td>{project.phase}</td>
                                 <td>{project.manager}</td>
+                                <td>
+                                    <Button
+                                        variant="primary"
+                                        onClick={() => navigate(`/projects/${project.id}`)}
+                                    >
+                                        View Details
+                                    </Button>
+                                </td>
                             </tr>
                         ))}
                     </tbody>

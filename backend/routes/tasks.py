@@ -47,13 +47,4 @@ def update_task(task_id):
     db.session.commit()
     return jsonify({"message": "Task updated successfully!"}), 200
 
-# ✅ Delete a task
-@tasks.route("/<int:task_id>", methods=["DELETE"])
-def delete_task(task_id):
-    task = Task.query.get(task_id)
-    if not task:
-        return jsonify({"error": "Task not found"}), 404
-
-    db.session.delete(task)
-    db.session.commit()
-    return jsonify({"message": "Task deleted successfully!"}), 200
+                                     

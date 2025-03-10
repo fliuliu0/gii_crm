@@ -19,8 +19,6 @@ A **Customer Relationship Management (CRM) System** built with **React (frontend
 
 ---
 
-## Getting Started
-
 ### 1️⃣ Clone the repository
 
 ```sh
@@ -42,7 +40,8 @@ pip install -r requirements.txt
 #### Run the backend server
 
 ```sh
-flask run
+cd backend
+python app.py
 ```
 
 ### 3️⃣ Frontend Setup
@@ -64,7 +63,7 @@ This will start the **React app** at `http://localhost:3000` and the **Flask API
 
 ---
 
-## 🔑 Default Login Credentials
+## Default Login Credentials
 
 ### **Admin**
 
@@ -87,7 +86,7 @@ This will start the **React app** at `http://localhost:3000` and the **Flask API
 
 ---
 
-## 🔐 Role-Based Access
+## Role-Based Access
 
 | Role                | Customers         | Sales       | Projects    | Funding     |
 | ------------------- | ----------------- | ----------- | ----------- | ----------- |
@@ -97,6 +96,5 @@ This will start the **React app** at `http://localhost:3000` and the **Flask API
 
 ---
 
-## 📌 API Endpoints
-
-
+## API Endpoints
+http://127.0.0.1:5000/apidocs/#/

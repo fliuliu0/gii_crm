@@ -4,10 +4,10 @@ import { Container, Table, Button, Modal, Form, Alert } from 'react-bootstrap';
 
 function Sales() {
     const [opportunities, setOpportunities] = useState([]);
-    const [filteredOpportunities, setFilteredOpportunities] = useState([]); // Filtered list
-    const [selectedCustomer, setSelectedCustomer] = useState(""); // Customer filter state
-    const [users, setUsers] = useState({}); // Store user ID to Name mapping
-    const [customers, setCustomers] = useState({}); // Store customer ID to Name mapping
+    const [filteredOpportunities, setFilteredOpportunities] = useState([]); 
+    const [selectedCustomer, setSelectedCustomer] = useState(""); 
+    const [users, setUsers] = useState({}); 
+    const [customers, setCustomers] = useState({}); 
     const [showModal, setShowModal] = useState(false);
     const [currentOpportunity, setCurrentOpportunity] = useState(null);
     const [newOpportunity, setNewOpportunity] = useState({
@@ -57,9 +57,8 @@ function Sales() {
         }
     };
 
-    // Function to Fetch User Names
     const fetchUserNames = async (opportunities) => {
-        const userIds = [...new Set(opportunities.map(op => op.owner))]; // Get unique user IDs
+        const userIds = [...new Set(opportunities.map(op => op.owner))]; 
         let userData = { ...users };
 
         await Promise.all(userIds.map(async (userId) => {
@@ -68,7 +67,7 @@ function Sales() {
                     const response = await axios.get(`http://127.0.0.1:5000/users/${userId}`);
                     userData[userId] = response.data.name;
                 } catch {
-                    userData[userId] = "Unknown"; // Fallback if user not found
+                    userData[userId] = "Unknown"; 
                 }
             }
         }));
@@ -76,9 +75,8 @@ function Sales() {
         setUsers(userData);
     };
 
-    // Function to Fetch Customer Names
     const fetchCustomerNames = async (opportunities) => {
-        const customerIds = [...new Set(opportunities.map(op => op.customer_id))]; // Get unique customer IDs
+        const customerIds = [...new Set(opportunities.map(op => op.customer_id))]; 
         let customerData = { ...customers };
 
         await Promise.all(customerIds.map(async (customerId) => {
@@ -87,7 +85,7 @@ function Sales() {
                     const response = await axios.get(`http://127.0.0.1:5000/customers/${customerId}`);
                     customerData[customerId] = response.data.name;
                 } catch {
-                    customerData[customerId] = "Unknown"; // Fallback if customer not found
+                    customerData[customerId] = "Unknown"; 
                 }
             }
         }));
@@ -98,7 +96,7 @@ function Sales() {
     const fetchAllCustomerNames = async () => {
         try {
             const response = await axios.get("http://127.0.0.1:5000/customers");
-            setCustomersList(response.data);  // ✅ Store full customer list
+            setCustomersList(response.data); 
         } catch (err) {
             setError("Failed to load customers.");
         }

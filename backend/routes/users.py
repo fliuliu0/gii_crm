@@ -2,9 +2,7 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from models import User
 from flasgger import swag_from
-import datetime
-import jwt
-from config import db, SECRET_KEY
+from config import db
 from flask_bcrypt import Bcrypt
 
 bcrypt = Bcrypt()
@@ -31,7 +29,6 @@ users = Blueprint("users", __name__)
         }
     }
 })
-
 def get_users():
     """
     Get All Users
@@ -193,68 +190,46 @@ def add_user():
 
 # Login user & return JWT token
 @users.route("/login", methods=["POST"])
-# @swag_from({
-#     "requestBody": {
-#         "required": True,
-#         "content": {
-#             "application/json": {
-#                 "example": {
-#                     "email": "john@example.com",
-#                     "password": "securepassword"
-#                 }
-#             }
-#         }
-#     },
-#     "responses": {
-#         200: {
-#             "description": "Login successful",
-#             "examples": {
-#                 "application/json": {
-#                     "message": "Login successful",
-#                     "token": "jwt_token_here"
-#                 }
-#             }
-#         },
-#         401: {
-#             "description": "Invalid credentials",
-#             "examples": {
-#                 "application/json": {
-#                     "error": "Invalid credentials"
-#                 }
-#             }
-#         }
-#     }
-# })
-# def login():
-#     """
-#     User Login
-#     ---
-#     tags:
-#       - Users
-#     requestBody:
-#       required: true
-#       content:
-#         application/json:
-#           schema:
-#             type: object
-#             properties:
-#               email:
-#                 type: string
-#               password:
-#                 type: string
-#     responses:
-#       200:
-#         description: Login successful, returns JWT token
-#       401:
-#         description: Invalid credentials
-#     """
-#     data = request.json
-#     user = User.query.filter_by(email=data["email"]).first()
-#     if user and user.check_password(data["password"]):
-#         token = create_access_token(identity=user.id)
-#         return jsonify({"message": "Login successful", "token": token}), 200
-
-#     return jsonify({"error": "Invalid credentials"}), 401
+@swag_from({
+    "tags": ["Authentication"],
+    "summary": "Login user & return JWT token",
+    "description": "Authenticates a user based on email and password, and returns a JWT token with user role.",
+    "parameters": [
+        {
+            "name": "body",
+            "in": "body",
+            "required": True,
+            "schema": {
+                "id": "LoginRequest",
+                "required": ["email", "password"],
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "example": "bob@example.com"
+                    },
+                    "password": {
+                        "type": "string",
+                        "example": "password123"
+                    }
+                }
+            }
+        }
+    ],
+    "responses": {
+        200: {
+            "description": "Successful login",
+            "examples": {
+                "application/json": {
+                    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ...",
+                    "role": "Admin"
+                }
+            }
+        },
+        401: {
+            "description": "Invalid email or password"
+        }
+    }
+})
 def login():
     data = request.json
     user = User.query.filter_by(email=data["email"]).first()
@@ -311,24 +286,44 @@ def delete_user(id):
     return jsonify({"message": "User deleted successfully!"})
 
 @users.route("/profile", methods=["GET"])
+@swag_from({
+    "tags": ["Authentication"],
+    "summary": "Get authenticated user's profile",
+    "description": "Fetches the profile details of the logged-in user using their JWT token.",
+    "parameters": [
+        {
+            "name": "Authorization",
+            "in": "header",
+            "required": True,
+            "type": "string",
+            "description": "Bearer JWT token required for authentication"
+        }
+    ],
+    "responses": {
+        200: {
+            "description": "User profile retrieved successfully",
+            "examples": {
+                "application/json": {
+                    "id": 1,
+                    "name": "Bob Example",
+                    "email": "bob@example.com",
+                    "role": "Admin"
+                }
+            }
+        },
+        401: {
+            "description": "Invalid or expired token"
+        },
+        404: {
+            "description": "User not found"
+        }
+    }
+})
 @jwt_required()
-# def profile():
-#     current_user_id = get_jwt_identity()
-#     user = User.query.get(current_user_id)
-#     if user:
-#         user_data = {
-#             "id": user.id,
-#             "name": user.name,
-#             "email": user.email,
-#             "role": user.role
-#         }
-#         return jsonify(user_data), 200
-#     else:
-#         return jsonify({"error": "User not found"}), 404
 def profile():
     try:
-        current_user_id = get_jwt_identity()  # ✅ Correct way to get user_id
-        print("Decoded User ID:", current_user_id)  # 🔍 Debugging log
+        current_user_id = get_jwt_identity()  
+        print("Decoded User ID:", current_user_id) 
 
         user = User.query.get(current_user_id)
         if not user:

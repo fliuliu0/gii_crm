@@ -6,7 +6,6 @@ import { Container, Row, Col, Button, Card } from "react-bootstrap";
 function SalesDashboard() {
     const navigate = useNavigate();
     
-    // State for user profile
     const [userProfile, setUserProfile] = useState({
         id: "",
         name: "Loading...",
@@ -14,14 +13,12 @@ function SalesDashboard() {
         role: ""
     });
 
-    // State for statistics
     const [stats, setStats] = useState({
         customers: 0,
         projects: 0,
         salesOpportunities: 0,
     });
 
-    // Fetch user profile
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (!token) {
@@ -34,11 +31,10 @@ function SalesDashboard() {
         })
         .then((response) => setUserProfile(response.data))
         .catch(() => {
-            navigate("/login"); // Redirect if fetch fails
+            navigate("/login"); 
         });
     }, [navigate]);
 
-    // Fetch statistics
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (!token) {

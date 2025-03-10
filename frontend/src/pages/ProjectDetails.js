@@ -12,18 +12,18 @@ function ProjectDetails() {
     const [resourceRequests, setResourceRequests] = useState([]);
     const [showTaskModal, setShowTaskModal] = useState(false);
     const [newTask, setNewTask] = useState({ description: "", due_date: "", assigned_to: "", status: "Pending" });
-    const [users, setUsers] = useState({}); // Store user ID to Name mapping
+    const [users, setUsers] = useState({}); 
     const [showLogModal, setShowLogModal] = useState(false);
     const [newLog, setNewLog] = useState({ change_type: "", comment: "", responsible_person: "" });
     const [showResourceModal, setShowResourceModal] = useState(false);
     const [newResource, setNewResource] = useState({ request_type: "", description: "", requested_by: "" });
     const [error, setError] = useState(null);
-    const [currentUser, setCurrentUser] = useState(null); // Store current logged-in user
+    const [currentUser, setCurrentUser] = useState(null);
     const [funding, setFunding] = useState(null);
     const [projectManagers, setProjectManagers] = useState([]);
 
     useEffect(() => {
-        axios.get("http://127.0.0.1:5000/users")  // ✅ Adjust this API endpoint if needed
+        axios.get("http://127.0.0.1:5000/users") 
             .then(res => {
                 const managers = res.data.filter(user => user.role === "Project Manager");
                 setProjectManagers(managers);
@@ -63,7 +63,6 @@ function ProjectDetails() {
         
     }, [projectId]);
 
-    // Fetch Current Logged-In User
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (!token) {
@@ -83,7 +82,7 @@ function ProjectDetails() {
 
 
     const fetchUserNames = async (tasks) => {
-        const userIds = [...new Set(tasks.map(task => task.assigned_to))]; // Get unique user IDs
+        const userIds = [...new Set(tasks.map(task => task.assigned_to))]; 
         let userData = { ...users };
 
         await Promise.all(userIds.map(async (userId) => {
@@ -92,7 +91,7 @@ function ProjectDetails() {
                     const response = await axios.get(`http://127.0.0.1:5000/users/${userId}`);
                     userData[userId] = response.data.name;
                 } catch {
-                    userData[userId] = "Unknown"; // Fallback if user not found
+                    userData[userId] = "Unknown"; 
                 }
             }
         }));
@@ -208,7 +207,6 @@ function ProjectDetails() {
     };
 
     const handleFundingStatusChange = async (newStatus) => {
-        // ✅ Map numbers to valid status strings
         const statusMapping = {
             1: "Funded",
             2: "Approved",
@@ -216,17 +214,17 @@ function ProjectDetails() {
             4: "Rejected"
         };
     
-        const mappedStatus = statusMapping[newStatus] || newStatus;  // Ensure it's a string
+        const mappedStatus = statusMapping[newStatus] || newStatus;  
     
-        console.log("Updating funding status to:", mappedStatus); // ✅ DEBUG LOG
+        console.log("Updating funding status to:", mappedStatus); 
     
         try {
             const response = await axios.put(
                 `http://127.0.0.1:5000/projects/${projectId}/funding`, 
-                { funding_status: mappedStatus }  // ✅ Now always sends a string
+                { funding_status: mappedStatus }  
             );
     
-            console.log("Funding status update response:", response.data); // ✅ DEBUG LOG
+            console.log("Funding status update response:", response.data); 
     
             setFunding(prevFunding => ({
                 ...prevFunding,

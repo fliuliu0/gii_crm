@@ -5,7 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 function ProjectForm({ isEditing = false }) {
     const navigate = useNavigate();
-    const { id } = useParams();  // Get project ID when editing
+    const { id } = useParams();  
     const [customers, setCustomers] = useState([]);
     const [formData, setFormData] = useState({
         customer_id: "",
@@ -17,7 +17,6 @@ function ProjectForm({ isEditing = false }) {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // ✅ Fetch customers from backend for dropdown
     useEffect(() => {
         axios.get("http://127.0.0.1:5000/customers")
             .then(response => {
@@ -30,7 +29,6 @@ function ProjectForm({ isEditing = false }) {
                 setLoading(false);
             });
 
-        // ✅ If editing, fetch project data
         if (isEditing && id) {
             axios.get(`http://127.0.0.1:5000/projects/${id}`)
                 .then(response => {
@@ -40,12 +38,10 @@ function ProjectForm({ isEditing = false }) {
         }
     }, [id, isEditing]);
 
-    // ✅ Handle input changes
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    // ✅ Handle form submission
     const handleSubmit = (e) => {
         e.preventDefault();
         const apiUrl = isEditing

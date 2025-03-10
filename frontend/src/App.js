@@ -20,7 +20,7 @@ import { Container } from "react-bootstrap";
 function App() {
   const location = useLocation();
 
-  // Exclude NavigationBar on Login and Dashboard pages
+  // Exclude NavigationBar on Login and Dashboard
   const hideNavbarOnPages = ["/", "/login", "/dashboard"];
   const shouldShowNavbar = !hideNavbarOnPages.includes(location.pathname);
 

@@ -18,9 +18,8 @@ function Login() {
             const { token, role } = response.data;
 
             localStorage.setItem("token", token);
-            localStorage.setItem("role", role); // ✅ Store user role in localStorage
+            localStorage.setItem("role", role); 
 
-            // ✅ Redirect based on role
             if (role === "Admin") {
                 navigate("/admindashboard");
             } else if (role === "Sales") {
@@ -28,7 +27,7 @@ function Login() {
             } else if (role === "Project Manager") {
                 navigate("/projectmanagerdashboard");
             } else {
-                navigate("/dashboard"); // Fallback route
+                navigate("/dashboard");
             }
         } catch (err) {
             setError("Invalid email or password");

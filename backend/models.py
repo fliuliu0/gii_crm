@@ -37,25 +37,11 @@ class Customer(db.Model):
     industry = db.Column(db.String(255))
     created_at = db.Column(db.TIMESTAMP, server_default=db.func.current_timestamp())
     address = db.Column(db.String(255))
-    location = db.Column(db.String(255))  # ✅ Ensure this is added
+    location = db.Column(db.String(255)) 
     tags = db.Column(db.String(255))
     technical_evaluator = db.Column(db.String(100))
     
-    # ✅ Relationships
     interactions = db.relationship("CustomerInteraction", backref="customer", lazy=True, cascade="all, delete")
-
-# class FundingInformation(db.Model):
-#     __tablename__ = "funding_information"
-
-#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-#     project_id = db.Column(db.Integer, db.ForeignKey("projects.id"), nullable=False)  # ✅ Link to projects, not customers
-#     funding_status = db.Column(db.Enum("Funded", "Approved", "Pending", "Rejected"), nullable=False)
-#     project_budget = db.Column(db.Numeric(15,2))
-#     approval_date = db.Column(db.TIMESTAMP, server_default=db.func.current_timestamp())
-#     decision_maker = db.Column(db.String(100))
-
-#     project = db.relationship("Project", back_populates="funding_info")  # ✅ Create relationship
-
 
 class CustomerInteraction(db.Model):
     __tablename__ = "customer_interactions"
@@ -65,17 +51,17 @@ class CustomerInteraction(db.Model):
     interaction_type = db.Column(db.Enum("Email", "Call", "Meeting", "File Upload"), nullable=False)
     interaction_date = db.Column(db.TIMESTAMP, server_default=db.func.current_timestamp())
     details = db.Column(db.Text)
-    file_path = db.Column(db.String(255))  # Store file path if it's an upload
+    file_path = db.Column(db.String(255)) 
 
 class SalesOpportunity(db.Model):
     __tablename__ = "sales_opportunity"
 
     id = db.Column(db.Integer, primary_key=True)
-    customer_id = db.Column(db.Integer, db.ForeignKey("customers.id"), nullable=False)  # ✅ Ensures FK to customers
-    opportunity = db.Column(db.String(100), nullable=False)  # ✅ FIXED: Match DB column name
-    sales_stage = db.Column(db.String(50))  # ✅ FIXED: Match DB column name
-    revenue = db.Column(db.Float)  # ✅ FIXED: Match DB column name
-    owner = db.Column(db.Integer, db.ForeignKey("users.id"))  # ✅ FIXED: Match DB column name
+    customer_id = db.Column(db.Integer, db.ForeignKey("customers.id"), nullable=False)  
+    opportunity = db.Column(db.String(100), nullable=False) 
+    sales_stage = db.Column(db.String(50)) 
+    revenue = db.Column(db.Float)  
+    owner = db.Column(db.Integer, db.ForeignKey("users.id")) 
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
 
 class Project(db.Model):
@@ -103,10 +89,10 @@ class Task(db.Model):
         db.ForeignKey('projects.id', ondelete='CASCADE'),
         nullable=False
     )
-    description = db.Column(db.String(255), nullable=False)  # Task description
-    due_date = db.Column(db.Date, nullable=False)  # Task deadline
-    assigned_to = db.Column(db.String, db.ForeignKey("users.email"))  # Who is responsible
-    status = db.Column(db.String(50), default="Pending")  # Task status: Pending, Done, In Progress
+    description = db.Column(db.String(255), nullable=False) 
+    due_date = db.Column(db.Date, nullable=False)  
+    assigned_to = db.Column(db.String, db.ForeignKey("users.email"))  
+    status = db.Column(db.String(50), default="Pending")  # Task status: Pending, In Progress, Completed
 
     project = db.relationship(
         'Project',
@@ -119,10 +105,10 @@ class CommunicationLog(db.Model):
     __tablename__ = "communication_records"
 
     id = db.Column(db.Integer, primary_key=True)
-    customer_id = db.Column(db.Integer, db.ForeignKey("customers.id"), nullable=False)  # ✅ Ensures FK to customers
-    contact_type = db.Column(db.String(50))  # ✅ FIXED: Match DB column name
-    details = db.Column(db.Text)  # ✅ FIXED: Match DB column name
-    contact_date = db.Column(db.DateTime, default=db.func.current_timestamp())  # ✅ FIXED: Match DB column name
+    customer_id = db.Column(db.Integer, db.ForeignKey("customers.id"), nullable=False)  
+    contact_type = db.Column(db.String(50))  
+    details = db.Column(db.Text)  
+    contact_date = db.Column(db.DateTime, default=db.func.current_timestamp())  
 
 
 class SupportRequest(db.Model):

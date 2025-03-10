@@ -81,13 +81,13 @@ function CustomerSales() {
             <h2>Sales Opportunities</h2>
             {error && <Alert variant="danger">{error}</Alert>}
 
-            {/* ✅ Back and Add Opportunity Buttons */}
+            {/* Back and Add Opportunity Buttons */}
             <div className="d-flex justify-content-between mb-3">
                 <Button variant="secondary" onClick={() => navigate(-1)}>Back</Button>
                 <Button variant="primary" onClick={() => setShowModal(true)}>Add Sales Opportunity</Button>
             </div>
 
-            {/* ✅ Sales Opportunities Table */}
+            {/* Sales Opportunities Table */}
             <Table striped bordered hover className="mt-3">
                 <thead>
                     <tr>
@@ -124,14 +124,14 @@ function CustomerSales() {
                 </tbody>
             </Table>
 
-            {/* ✅ Add Opportunity Modal */}
+            {/* Add Opportunity Modal */}
             <Modal show={showModal} onHide={() => setShowModal(false)}>
                 <Modal.Header closeButton>
                     <Modal.Title>Add Sales Opportunity</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form>
-                        {/* ✅ Customer ID (Auto-filled) */}
+                        {/* Customer ID (Auto-filled) */}
                         <Form.Group className="mb-3">
                             <Form.Label>Customer</Form.Label>
                             <Form.Control
@@ -141,7 +141,7 @@ function CustomerSales() {
                             />
                         </Form.Group>
 
-                        {/* ✅ Opportunity Name */}
+                        {/* Opportunity Name */}
                         <Form.Group className="mb-3">
                             <Form.Label>Opportunity</Form.Label>
                             <Form.Control
@@ -152,7 +152,7 @@ function CustomerSales() {
                             />
                         </Form.Group>
 
-                        {/* ✅ Sales Stage Dropdown */}
+                        {/* Sales Stage Dropdown */}
                         <Form.Group className="mb-3">
                             <Form.Label>Sales Stage</Form.Label>
                             <Form.Select
@@ -167,7 +167,7 @@ function CustomerSales() {
                             </Form.Select>
                         </Form.Group>
 
-                        {/* ✅ Revenue Input */}
+                        {/* Revenue Input */}
                         <Form.Group className="mb-3">
                             <Form.Label>Revenue</Form.Label>
                             <Form.Control
@@ -178,7 +178,7 @@ function CustomerSales() {
                             />
                         </Form.Group>
 
-                        {/* ✅ Sales Representative Dropdown */}
+                        {/* Sales Representative Dropdown */}
                         <Form.Group className="mb-3">
                             <Form.Label>Sales Representative</Form.Label>
                             <Form.Select

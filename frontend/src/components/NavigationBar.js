@@ -11,8 +11,8 @@ function NavigationBar() {
         const token = localStorage.getItem("token");
         if (token) {
             try {
-                const decoded = jwtDecode(token); // Decode JWT
-                setRole(decoded.role); // Extract user role
+                const decoded = jwtDecode(token);
+                setRole(decoded.role);
             } catch (error) {
                 console.error("Invalid token", error);
                 localStorage.removeItem("token");

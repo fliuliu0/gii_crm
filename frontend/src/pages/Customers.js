@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Container, Button, Navbar, Nav, Table, Alert, Form } from "react-bootstrap";
+import { Container, Button, Table, Alert, Form } from "react-bootstrap";
 
 function Customers() {
     const navigate = useNavigate();

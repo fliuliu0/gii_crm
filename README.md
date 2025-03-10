@@ -23,7 +23,7 @@ A **Customer Relationship Management (CRM) System** built with **React (frontend
 
 ```sh
  git clone https://github.com/fliuliu0/gii_crm.git
- cd your-repo
+ cd gii_crm
 ```
 
 ### 2️⃣ Backend Setup
